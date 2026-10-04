@@ -62,7 +62,7 @@ multiqc qc/before_trim -o qc/before_trim
 <img width="974" height="250" alt="image" src="https://github.com/user-attachments/assets/4b746a6a-60e1-4336-aa71-195ec3f3d708" />
 
 На рисунке представлена сводная статистика качества четырёх наборов ридов до тримминга (MultiQC).
-Количество ридов соответствует ожидаемому — программа seqtk отработала корректно. Риды Mate-Pair (MP) заметно длиннее, чем Pair-End (PE). Значения GC-содержания внутри каждой пары R1/R2 практически одинаковы, что говорит о согласованности состава парных файлов.
+Количество ридов соответствует ожидаемому — программа seqtk отработала корректно. Риды Mate-Pair (MP) заметно длиннее, чем Paired-End (PE). Значения GC-содержания внутри каждой пары R1/R2 практически одинаковы, что говорит о согласованности состава парных файлов.
 
 Per Sequence GC Content
 
@@ -267,7 +267,7 @@ platanus gap_close \
     -o gap_close/oil \
     -t 4
 ```
-Результат сохранились в новый файл
+Результат сохранился в новый файл
 
 11.  Подсчет количества гэпов для самого длинного скаффолда после gap_closе.
 
@@ -343,7 +343,7 @@ Google Colab: https://colab.research.google.com/drive/1kT9EtsfpvGttNqnCA0tOc6OJ_
 | Количество гэпов                | 0             | 0             | оба идеально |
 | Общая длина гэпов               | 0 bp          | 0 bp          | оба идеально |
 
-Google Collab: https://colab.research.google.com/drive/1PAcw7JLZSbLgFaiZJctWGlh5vePPs2Cs?usp=sharing
+Google Colab: https://colab.research.google.com/drive/1PAcw7JLZSbLgFaiZJctWGlh5vePPs2Cs?usp=sharing
 
 Отличный результат у обеих сборок. После выполнения gap-closing в обоих случаях гэпы в самом длинном скаффолде были полностью закрыты. При использовании большего объёма данных финальный скаффолд получился немного длиннее (383 574 bp против 383 412 bp).
 
