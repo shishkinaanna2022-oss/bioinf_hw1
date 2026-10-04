@@ -18,46 +18,47 @@ Mate-pair reads: oilMP_S4_L001_R1_001.fastq ; oilMP_S4_L001_R2_001.fastq
 Для paired-end данных было выбрано по 5 000 000 чтений из каждого файла (R1 и R2).
 Для mate-pair данных было выбрано по 1 500 000 чтений из каждого файла.
 Для всех четырёх файлов использовался одинаковый seed 3001. Использование одинакового seed позволяет получить воспроизводимую случайную выборку.
-
+```
 cd ~/hw1
 
 mkdir -p subset
 
 seqtk sample -s722 oil_R1.fastq 5000000 > subset/oil_R1.sub.fastq
-
 seqtk sample -s722 oil_R2.fastq 5000000 > subset/oil_R2.sub.fastq
 
 seqtk sample -s722 oilMP_S4_L001_R1_001.fastq 1500000 > subset/oilMP_R1.sub.fastq
-
 seqtk sample -s722 oilMP_S4_L001_R2_001.fastq 1500000 > subset/oilMP_R2.sub.fastq
-
+```
 2. Контроль качества до тримминга
 
 Для оценки качества выбранных чтений был выполнен FastQC.
 Сначала была создана отдельная директория для результатов:
-
+```
 mkdir -p qc/before_trim
-
+```
 Затем для четырёх полученных FASTQ-файлов был запущен FastQC:
 
+```
 fastqc \
     subset/oil_R1.sub.fastq \
     subset/oil_R2.sub.fastq \
     subset/oilMP_R1.sub.fastq \
     subset/oilMP_R2.sub.fastq \
     -o qc/before_trim
+```
     
 В результате FastQC создал отдельные отчёты для каждого из четырёх FASTQ-файлов. Проверка выполнялась до тримминга, чтобы оценить исходное качество выбранных чтений.
 После FastQC результаты были объединены с помощью MultiQC.
-
+```
 multiqc qc/before_trim -o qc/before_trim
-
+```
 Таким образом, MultiQC должен был собрать результаты четырёх отдельных отчётов FastQC в один общий HTML-отчёт, что позволяет удобнее сравнивать качество всех образцов.
 При использовании MultiQC через терминал итоговый HTML-файл был успешно создан, однако в нём не отображались графики. Поэтому для визуального анализа результатов MultiQC была использована веб-версия MultiQC, куда были загружены результаты FastQC. Графики и статистические показатели, использованные в отчёте, были получены из веб-версии.
 Таким образом, FastQC использовался для непосредственной оценки качества каждого FASTQ-файла, а MultiQC — для объединения и визуального сравнения полученных результатов.
 
 
 Результаты MultiQC до тримминга:
+
 <img width="974" height="250" alt="image" src="https://github.com/user-attachments/assets/4b746a6a-60e1-4336-aa71-195ec3f3d708" />
 
 На рисунке представлена сводная статистика качества четырёх наборов ридов до тримминга (MultiQC).
@@ -123,23 +124,23 @@ R2:
 
 3. Тримминг
 Для paired-end чтений использовался platanus_trim:
-
+```
 cd ~/hw1
 
 platanus_trim \
     subset/oil_R1.sub.fastq \
     subset/oil_R2.sub.fastq
-
+```
 Для mate-pair чтений использовался platanus_internal_trim:
-
+```
 platanus_internal_trim \
     subset/oilMP_R1.sub.fastq \
     subset/oilMP_R2.sub.fastq
-
+```
 4. Контроль качества после тримминга
 
 После тримминга снова был выполнен FastQC:
-
+```
 mkdir -p qc/after_trim
 
 fastqc \
@@ -148,11 +149,11 @@ fastqc \
     subset/oilMP_R1.sub.fastq.int_trimmed \
     subset/oilMP_R2.sub.fastq.int_trimmed \
     -o qc/after_trim
-    
+```
 Затем был выполнен MultiQC:
-
+```
 multiqc qc/after_trim -o qc/after_trim
-
+```
 Результаты MultiQC после тримминга
 
 <img width="1452" height="379" alt="image" src="https://github.com/user-attachments/assets/40174bc2-a70c-4d8f-9481-8dd1854ccb56" />
@@ -188,31 +189,108 @@ Sequence Duplication Levels
 5. Сборка контигов
 
 Для сборки контигов из подрезанных paired-end чтений был использован platanus assemble:
-
+```
 mkdir -p assembly
 
 platanus assemble \
     -f subset/oil_R1.sub.fastq.trimmed \
     subset/oil_R2.sub.fastq.trimmed \
     -o assembly/oil
-    
+```
 6. Статистика контигов
    
 Статистика была рассчитана в Google Colab с использованием Python и Biopython.
 
 Полученные результаты:
 
-Количество контигов	- 604.
+Количество контигов	- 604
 
-Общая длина	- 3 924 669 bp.
+Общая длина	- 3 924 669 bp
 
-Самый длинный контиг- 179 307 bp.
+Самый длинный контиг- 179 307 bp
 
-N50	- 52 802 bp. 
+N50	- 52 802 bp
 
 Google Colab: https://colab.research.google.com/drive/1kT9EtsfpvGttNqnCA0tOc6OJ_r6eKiGY?hl=ru#scrollTo=WG_yxXuhqmeB
 
-Использованный код сохранён в src.
+7. Сборка скаффолдов
+Скаффолды были собраны из полученных контигов с использованием подрезанных paired-end и mate-pair чтений и сохранены в новый файл:
+```
+mkdir -p scaffolding
+
+platanus scaffold \
+    -c assembly/oil_contig.fa \
+    -IP1 subset/oil_R1.sub.fastq.trimmed subset/oil_R2.sub.fastq.trimmed \
+    -OP1 subset/oilMP_R1.sub.fastq.int_trimmed subset/oilMP_R2.sub.fastq.int_trimmed \
+    -o scaffolding/from_contigs
+```
+8. Статистика скаффолдов
+Статистика была рассчитана в Google Colab с использованием Python и Biopython.
+
+Полученные результаты:
+
+Количество скаффолдов - 96
+
+Общая длина	- 3 869 763 bp
+
+Самый длинный скаффолд - 383 582 bp
+
+N50	- 169 908 bp
+
+Google Colab: https://colab.research.google.com/drive/1kT9EtsfpvGttNqnCA0tOc6OJ_r6eKiGY?hl=ru#scrollTo=WG_yxXuhqmeB
+
+9. Подсчет количества гэпов для самого длинного скаффолда
+
+Расчеты проводились в Google Colab с использованием Python и Biopython.
+
+Полученные результаты:
+
+Количество гэпов - 2
+
+Общая длина гэпов - 25 bp
+
+Google Colab: https://colab.research.google.com/drive/1kT9EtsfpvGttNqnCA0tOc6OJ_r6eKiGY?hl=ru#scrollTo=WG_yxXuhqmeB
+
+10. Gap closing
+
+Для уменьшения количества гэпов был использован platanus gap_close.
+В качестве входных данных использовались скаффолды и подрезанные PE и MP чтения:
+```
+mkdir -p gap_close
+
+platanus gap_close \
+    -c data/scaffolds.fasta \
+    -IP1 subset/oil_R1.sub.fastq.trimmed subset/oil_R2.sub.fastq.trimmed \
+    -OP1 subset/oilMP_R1.sub.fastq.int_trimmed subset/oilMP_R2.sub.fastq.int_trimmed \
+    -o gap_close/oil \
+    -t 4
+```
+Результат сохранились в новый файл
+
+11.  Подсчет количества гэпов для самого длинного скаффолда после gap_closе.
+
+Расчеты проводились в Google Colab с использованием Python и Biopython.
+
+ID самого длинного скаффолда - scaffold15_cov234
+
+Длина - 383 574 bp
+
+Количество гэпов - 0
+
+Общая длина гэпов - 0 bp
+
+Таким образом, после выполнения gap_close в самом длинном скаффолде гэпов не осталось.
+
+Google Colab: https://colab.research.google.com/drive/1kT9EtsfpvGttNqnCA0tOc6OJ_r6eKiGY?hl=ru#scrollTo=WG_yxXuhqmeB
+
+12. Последовательность самого длинного скаффолда
+
+Последовательность самого длинного скаффолда была сохранена в data/longest.fasta
+
+Самый длинный скаффолд - scaffold15_cov234
+
+Длина - 383 574 bp
+
 
 
 
