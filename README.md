@@ -300,7 +300,7 @@ Google Colab: https://colab.research.google.com/drive/1kT9EtsfpvGttNqnCA0tOc6OJ_
 Для paired-end данных было выбрано по 2 500 000 чтений из каждого файла.
 Для mate-pair данных было выбрано по 750 000 чтений из каждого файла.
 
-Код использовала тот же для WSL2 и Google Collab.
+Код использовала тот же для WSL2 и Google Colab.
 
 Статистика контигов:
 
