@@ -23,11 +23,11 @@ cd ~/hw1
 
 mkdir -p subset
 
-seqtk sample -s722 oil_R1.fastq 5000000 > subset/oil_R1.sub.fastq
-seqtk sample -s722 oil_R2.fastq 5000000 > subset/oil_R2.sub.fastq
+seqtk sample -s3001 oil_R1.fastq 5000000 > subset/oil_R1.sub.fastq
+seqtk sample -s3001 oil_R2.fastq 5000000 > subset/oil_R2.sub.fastq
 
-seqtk sample -s722 oilMP_S4_L001_R1_001.fastq 1500000 > subset/oilMP_R1.sub.fastq
-seqtk sample -s722 oilMP_S4_L001_R2_001.fastq 1500000 > subset/oilMP_R2.sub.fastq
+seqtk sample -s3001 oilMP_S4_L001_R1_001.fastq 1500000 > subset/oilMP_R1.sub.fastq
+seqtk sample -s3001 oilMP_S4_L001_R2_001.fastq 1500000 > subset/oilMP_R2.sub.fastq
 ```
 2. Контроль качества до тримминга
 
@@ -188,7 +188,7 @@ Sequence Duplication Levels
 
 5. Сборка контигов
 
-Для сборки контигов из подрезанных paired-end чтений был использован platanus assemble:
+Для сборки контигов из триммированных paired-end чтений был использован platanus assemble:
 ```
 mkdir -p assembly
 
@@ -214,7 +214,7 @@ N50	- 52 802 bp
 Google Colab: https://colab.research.google.com/drive/1kT9EtsfpvGttNqnCA0tOc6OJ_r6eKiGY?hl=ru#scrollTo=WG_yxXuhqmeB
 
 7. Сборка скаффолдов
-Скаффолды были собраны из полученных контигов с использованием подрезанных paired-end и mate-pair чтений и сохранены в новый файл:
+Скаффолды были собраны из полученных контигов с использованием триммированных paired-end и mate-pair чтений и сохранены в новый файл:
 ```
 mkdir -p scaffolding
 
@@ -238,6 +238,8 @@ platanus scaffold \
 N50	- 169 908 bp
 
 Google Colab: https://colab.research.google.com/drive/1kT9EtsfpvGttNqnCA0tOc6OJ_r6eKiGY?hl=ru#scrollTo=WG_yxXuhqmeB
+
+Использование mate-pair ридов позволило значительно увеличить N50 (с 52.8 kb до 169.9 kb).
 
 9. Подсчет количества гэпов для самого длинного скаффолда
 
@@ -279,13 +281,13 @@ ID самого длинного скаффолда - scaffold15_cov234
 
 Общая длина гэпов - 0 bp
 
-Таким образом, после выполнения gap_close в самом длинном скаффолде гэпов не осталось.
+Таким образом, после выполнения gap_close в самом длинном скаффолде гэпов не осталось. Gap closing полностью закрыл гэпы в самом длинном скаффолде.
 
 Google Colab: https://colab.research.google.com/drive/1kT9EtsfpvGttNqnCA0tOc6OJ_r6eKiGY?hl=ru#scrollTo=WG_yxXuhqmeB
 
 12. Последовательность самого длинного скаффолда
 
-Последовательность самого длинного скаффолда была сохранена в data/longest.fasta
+Последовательность самого длинного скаффолда была сохранена в longest.fasta
 
 Самый длинный скаффолд - scaffold15_cov234
 
